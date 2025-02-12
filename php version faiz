@@ -1,0 +1,155 @@
+CREATE DATABASE tonjeu;
+USE tonjeu;
+
+-- Table des animaux
+CREATE TABLE animaux (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    taille DECIMAL(4,2),  -- En mètres
+    poids DECIMAL(6,2)    -- En kg
+);
+
+-- Table des habitats
+CREATE TABLE habitats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Table des régimes alimentaires
+CREATE TABLE regimes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Table de liaison entre animaux et habitats (Relation Many-to-Many)
+CREATE TABLE animaux_habitats (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    animal_id INT,
+    habitat_id INT,
+    FOREIGN KEY (animal_id) REFERENCES animaux(id) ON DELETE CASCADE,
+    FOREIGN KEY (habitat_id) REFERENCES habitats(id) ON DELETE CASCADE
+);
+
+-- Table de liaison entre animaux et régimes alimentaires (Relation Many-to-Many)
+CREATE TABLE animaux_regimes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    animal_id INT,
+    regime_id INT,
+    FOREIGN KEY (animal_id) REFERENCES animaux(id) ON DELETE CASCADE,
+    FOREIGN KEY (regime_id) REFERENCES regimes(id) ON DELETE CASCADE
+);
+
+-- Ajout des animaux
+INSERT INTO animaux (nom, taille, poids) VALUES
+('Lion', 1.2, 190),
+('Éléphant', 3.0, 5000),
+('Dauphin', 2.5, 200),
+('Aigle', 0.8, 5),
+('Tortue', 0.4, 50);
+
+-- Ajout des habitats
+INSERT INTO habitats (nom) VALUES
+('Terre'),
+('Mer'),
+('Océan'),
+('Lac'),
+('Air');
+
+-- Ajout des régimes alimentaires
+INSERT INTO regimes (nom) VALUES
+('Carnivore'),
+('Herbivore'),
+('Omnivore');
+
+-- Liaison animaux ↔ habitats
+INSERT INTO animaux_habitats (animal_id, habitat_id) VALUES
+(1, 1),  -- Lion → Terre
+(2, 1),  -- Éléphant → Terre
+(3, 3),  -- Dauphin → Océan
+(4, 5),  -- Aigle → Air
+(5, 1),  -- Tortue → Terre
+(5, 4);  -- Tortue → Lac
+
+-- Liaison animaux ↔ régimes alimentaires
+INSERT INTO animaux_regimes (animal_id, regime_id) VALUES
+(1, 1),  -- Lion → Carnivore
+(2, 2),  -- Éléphant → Herbivore
+(3, 3),  -- Dauphin → Omnivore
+(4, 1),  -- Aigle → Carnivore
+(5, 3);  -- Tortue → Omnivore
+
+
+SELECT a.nom AS Animal, a.taille, a.poids, 
+       GROUP_CONCAT(DISTINCT h.nom SEPARATOR ', ') AS Habitat,
+       GROUP_CONCAT(DISTINCT r.nom SEPARATOR ', ') AS Regime
+FROM animaux a
+LEFT JOIN animaux_habitats ah ON a.id = ah.animal_id
+LEFT JOIN habitats h ON ah.habitat_id = h.id
+LEFT JOIN animaux_regimes ar ON a.id = ar.animal_id
+LEFT JOIN regimes r ON ar.regime_id = r.id
+WHERE a.nom = 'Lion'
+GROUP BY a.id;
+
+
+
+
+
+
+
+
+PHP cote php
+
+<?php
+session_start();
+$pdo = new PDO('mysql:host=localhost;dbname=tonjeu;charset=utf8', 'root', '');
+
+// Sélection de l'animal cible s'il n'existe pas encore
+if (!isset($_SESSION['animal_cible'])) {
+    $stmt = $pdo->query("
+        SELECT a.id, a.nom, a.taille, a.poids, 
+               GROUP_CONCAT(DISTINCT h.nom SEPARATOR ', ') AS habitat,
+               GROUP_CONCAT(DISTINCT r.nom SEPARATOR ', ') AS regime
+        FROM animaux a
+        LEFT JOIN animaux_habitats ah ON a.id = ah.animal_id
+        LEFT JOIN habitats h ON ah.habitat_id = h.id
+        LEFT JOIN animaux_regimes ar ON a.id = ar.animal_id
+        LEFT JOIN regimes r ON ar.regime_id = r.id
+        GROUP BY a.id
+        ORDER BY RAND() LIMIT 1
+    ");
+    $_SESSION['animal_cible'] = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+$animal_cible = $_SESSION['animal_cible'];
+$nom_animal_cible = $animal_cible['nom'];
+
+if (isset($_POST['animal_recherche'])) {
+    $animal_nom = strtolower(trim($_POST['animal_recherche']));
+
+    $stmt = $pdo->prepare("
+        SELECT a.nom, a.taille, a.poids, 
+               GROUP_CONCAT(DISTINCT h.nom SEPARATOR ', ') AS habitat,
+               GROUP_CONCAT(DISTINCT r.nom SEPARATOR ', ') AS regime
+        FROM animaux a
+        LEFT JOIN animaux_habitats ah ON a.id = ah.animal_id
+        LEFT JOIN habitats h ON ah.habitat_id = h.id
+        LEFT JOIN animaux_regimes ar ON a.id = ar.animal_id
+        LEFT JOIN regimes r ON ar.regime_id = r.id
+        WHERE LOWER(a.nom) = ?
+        GROUP BY a.id
+    ");
+    $stmt->execute([$animal_nom]);
+    $animal_joueur = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($animal_joueur) {
+        echo "<h3>Comparaison avec $animal_nom</h3>";
+        echo "<p>Habitat : " . $animal_joueur['habitat'] . "</p>";
+        echo "<p>Régime : " . $animal_joueur['regime'] . "</p>";
+    }
+}
+?>
+<form method="POST">
+    <label>Entrez un animal :</label>
+    <input type="text" name="animal_recherche" required>
+    <input type="submit" value="Comparer">
+</form>
