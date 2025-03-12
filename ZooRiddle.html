@@ -1,118 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <script>
-            function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-MERFG9BKC")
-        </script>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title> Zoo Riddle</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" defer><</script>
-        <style type="text/css"> ==$0
-            :root, :host{
-                --fa-font-solid: normal 900 1em/1 "Font Awesome 6 Solid";
-                --fa-font-regular: normal 400 1em/1 "Font Awesome 6 Regular";
-                --fa-font-light: normal 300 1em/1 "Font Awesome 6 Light";
-                --fa-font-thin: normal 100 1em/1 "Font Awesome 6 Thin";
-                --fa-font-duotone: normal 900 1em/1 "Font Awesome 6 Duoton";
-                --fa-font-sharp-solid: normal 900 1em/1 "Font Awesome 6 Sharp";
-                --fa-font-sharp-regular: normal 400 1em/1 "Font Awesome 6 Sharp";
-                --fa-font-sharp-light: normal 300 1em/1 "FonT Awesome 6 Sharp";
-                --fa-font-sharp-thin: normal 100 1em/1 "Font Awesome 6 Sharp";
-                --fa-font brands: normal 400 1em/1 "Fonr Awesome 6 Brands";
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoo Riddle Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
 
-            svg:not(:root).svg-inline--fa, svg:not(:host).svg-inline--fa {
-                overflow : visible;
-                box-sizing : content-box;
-            }
+        h1 {
+            color: #333;
+        }
 
-            .svg-inline--fa {
-                display: var(--fa-display, inline-block);
-                height: 1em;
-                overflow: visible;
-                vertical-align: -0.125em;
-            }
-            .svg-inline--fa.fa-2xs{
-                vertical-align: 0.1em;
-            }
-            .svg-inline--fa.fa-xs{
-                vertical-align: 0em;
-            }
-            .svg-inline--fa.fa-sm {
-                vertical-align: -0.0713em;
-            }
-            .svg-inline--fa.fa-lg {
-                vertical-align: -0.2em;
-            }
-            .svg-inline--fa.fa-xl{
-                vertical-align: -0.25em;
-            }
-            .svg-inline--fa.fa-2xl{
-                vertical-align: -0.3125em;
-            }
-            .svg-inline--fa.fa-pull-left{
-                margin-right: var(--fa-pull-margin, 0.3em);
-                width: auto;
-            }
-            .svg-inline--fa.fa-pull-right{
-                margin-left: var(--fa-pull-margin, 0.3em);
-                width: auto;
-            }   
-            .svg-inline--fa.fa-li{
-                width: var(--fa-li-width, 2em);
-                top: 0.25em;
-            }
+        /* Game Container */
+        #game-container {
+            background: rgb(16, 134, 42);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: auto;
+            display: none;
+        }
 
-            body {
-                font-family: : Arial, sans-serif;
-                background-color : #f4f4f4;
-                text-align: center;
-                padding : 20px;
-            }
+        #animal-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
 
-            h1 {
-                color: #915151;
-            }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
 
-            #game-container {
-                background: rgb(16, 134, 42);
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
-                max-width: 500px;
-                margin: auto;
-            }
-            #animal-image {
-                max-width: 100%;
-                border-radius: 10px;
-                margin-bottom: 20px;
-            }
-            input {
-                width: 80%;
-                padding 10px;
-                margin: : 10 px 0;
-                font-size: 16px;
-            }
-            button {
-                background: #dad1ca;
-                color: white;
-                border: none;
-                padding : 10px 15px;
-                font-size : 16px;
-                cursor: pointer;
-                border-radius: 5px;
-            }
-            button: hover{
-                background: #218838;
-            }
-            #result {
-                font-size: 18px;
-                font-weight: bold;
-                margin-top: 15px;
-            }
+        button {
+            background: #218838;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
 
+        button:hover {
+            background: #1a6e2b;
+        }
 
-        </style>
-    </head>
+        #result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1b1b1b;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            font-size: 24px;
+        }
+
+        #loading-dog {
+            width: 100px;
+            margin-bottom: 20px;
+            animation: run 2s linear infinite;
+        }
+
+        /* Dog Running Animation */
+        @keyframes run {
+            0% { transform: translateX(-50px); }
+            50% { transform: translateX(50px); }
+            100% { transform: translateX(-50px); }
+        }
+    </style>
+</head>
+<body>
+    <h1><img src="your-logo.png" alt="Logo" style="height: 50px;"> Zoo Riddle Game</h1>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Running Dog" id="loading-dog">
+        <p>Loading...</p>
+    </div>
+
+    <!-- Game Content -->
+    <h1>Zoo Riddle</h1>
+    <div id="game-container">
+        <img id="animal-image" src="" alt="Animal">
+        <input type="text" id="user-input" placeholder="Enter animal name...">
+        <button onclick="checkAnswer()">Submit</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        // List of animals and image URLs (replace URLs with real ones)
+        const animals = [
+            { name: "lion", image: "https://example.com/lion.jpg" },
+            { name: "elephant", image: "https://example.com/elephant.jpg" },
+            { name: "giraffe", image: "https://example.com/giraffe.jpg" }
+        ];
+
+        let currentAnimal = {};
+
+        // Function to load a random animal
+        function loadRandomAnimal() {
+            const randomIndex = Math.floor(Math.random() * animals.length);
+            currentAnimal = animals[randomIndex];
+            document.getElementById('animal-image').src = currentAnimal.image;
+            document.getElementById('result').innerText = '';
+            document.getElementById('user-input').value = '';
+        }
+
+        function checkAnswer() {
+            const userGuess = document.getElementById('user-input').value.trim().toLowerCase();
+            if (userGuess === currentAnimal.name.toLowerCase()) {
+                document.getElementById('result').innerText = "🎉 Correct!";
+            } else {
+                document.getElementById('result').innerText = "❌ Try again!";
+            }
+        }
+
+        // Page load: simulate loading then show game
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('game-container').style.display = 'block';
+                loadRandomAnimal(); // Load first animal
+            }, 2000); // Show loading screen for 2 seconds
+        };
+    </script>
+
+</body>
 </html>
