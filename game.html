@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoo Riddle - Guess the Animal</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>ZOO RIDDLE</h1>
+        
+        <div class="difficulty-selector">
+            <button class="difficulty-btn active" data-difficulty="">All Animals</button>
+            <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+            <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+            <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+        </div>
+        
+        <div class="image-container">
+            <img id="animal-image" src="images/blur/placeholder.jpg" alt="Hidden animal">
+        </div>
+        
+        <div class="hint-container">
+            <div class="hint" id="hint1">Hint 1: Click to reveal</div>
+            <div class="hint" id="hint2">Hint 2: Click to reveal</div>
+            <div class="hint" id="hint3">Hint 3: Click to reveal</div>
+            <div class="hint" id="hint4">Hint 4: Click to reveal</div>
+        </div>
+        
+        <div class="guess-container">
+            <input type="text" id="guess-input" placeholder="Enter animal name...">
+            <button id="submit-guess">Submit</button>
+        </div>
+        
+        <div class="result-message" id="result"></div>
+        
+        <div class="animal-info" id="animal-info" style="display:none;">
+            <h3 id="animal-name"></h3>
+            <p id="animal-scientific"></p>
+            <p id="animal-weight"></p>
+            <p id="animal-description"></p>
+            <p id="animal-type"></p>
+        </div>
+        
+        <div class="controls">
+            <button id="new-game">New Animal</button>
+            <button id="reveal">Reveal Answer</button>
+        </div>
+    </div>
+    <div class="animal-info" id="animal-info" style="display:none;">
+        <h3 id="animal-name"></h3>
+        <p id="animal-scientific"></p>
+        <p id="animal-weight"></p>
+        <p id="animal-type"></p>
+        <p id="animal-conservation"></p>
+        <p id="animal-habitats"></p>
+        <p id="animal-description"></p>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
